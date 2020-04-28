@@ -28,7 +28,7 @@ public class DatabaseHelper {
 
     }
 
-    public static void createNewTable() {
+    public static void createCourseTable() {
         String sql = "CREATE TABLE IF NOT EXISTS COURSES(FacultyName text, CourseNumber int, coursename text, "
                 + "courseDescription text, credits int, PRIMARY KEY (facultyname, coursenumber))";
 
@@ -129,7 +129,7 @@ public class DatabaseHelper {
 
     }
 
-    public static ArrayList<Course> makeCourse() {
+    public static ArrayList<Course> makeCourses() {
         String sql = "SELECT * FROM COURSES";
         try (Connection conn = DriverManager.getConnection(DBURL);
              Statement stmt = conn.createStatement()) {

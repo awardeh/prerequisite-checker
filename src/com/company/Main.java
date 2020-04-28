@@ -8,7 +8,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArrayList<Course> courses = makeCourse();
+        ArrayList<Course> courses = makeCourses();
+        assert courses != null;
         for (Course c : courses) {
             makePrereqs(c, courses);
             makePostreqs(c, courses);
