@@ -10,7 +10,13 @@ public class Course {
     private int courseNumber;
     private float credits;
     private String description;
-    Map<Course, Course> prereqs = new HashMap<>();
+    private ArrayList<Course> preRequisites = new ArrayList<>();
+
+    public Course(String s, int i) {
+        this.courseFaculty = s;
+        this.courseNumber = i;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -19,7 +25,6 @@ public class Course {
         this.description = description;
     }
 
-    private ArrayList<Course> preRequisites;
 
     public String getCourseName() {
         return courseName;
@@ -37,7 +42,7 @@ public class Course {
         this.courseFaculty = courseFaculty;
     }
 
-    public ArrayList<String> getPreRequisites() {
+    public ArrayList<Course> getPreRequisites() {
         return preRequisites;
     }
 
@@ -75,5 +80,27 @@ public class Course {
     @Override
     public String toString(){
         return this.courseFaculty + this.courseNumber;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null)
+        {
+            return false;
+        }
+
+        if (this.getClass() != other.getClass())
+        {
+            return false;
+        }
+
+        if (!this.courseFaculty.equals(((Course) other).courseFaculty))
+        {
+            return false;
+        }
+
+        return this.courseNumber == ((Course) other).courseNumber;
+
+
     }
 }

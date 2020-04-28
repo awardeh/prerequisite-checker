@@ -116,13 +116,13 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
         String sql2 = "SELECT * FROM prereqs";
-        try (Connection conn = DriverManager.getConnection(DBURL){
-            PreparedStatement psmt = conn.prepareStatement(sql);
+        try (Connection conn = DriverManager.getConnection(DBURL)) {
+            PreparedStatement psmt = conn.prepareStatement(sql2);
             ResultSet rs = psmt.executeQuery();
             while (rs.next()) {
                 System.out.println(rs.getString("facultyname1") + "\t" +
                         rs.getInt("coursenumber1") + "\t" +
-                        rs.getString("facultyname1") + "\t" +
+                        rs.getString("facultyname2") + "\t" +
                         rs.getInt("coursenumber2"));
             }
         } catch (SQLException e) {
@@ -149,21 +149,25 @@ public class DatabaseHelper {
 
     }
 
-    public static void makePrereqs(ArrayList<Course> courses) {
-        String sql = "SELECT * FROM prereqs where coursename1 = ?";
-        try (Connection conn = DriverManager.getConnection(DBURL);
-             {
-            ResultSet rs = stmt.executeQuery(sql);
+    public static void makePrereqs(Course course, ArrayList<Course> courses) {
+        String sql = "SELECT Facultyname2, coursenumber2 FROM prereqs where Facultyname1 = ? and coursenumber1 = ?";
+        try (Connection conn = DriverManager.getConnection(DBURL)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, course.getCourseFaculty());
+            pstmt.setInt(2, course.getCourseNumber());
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                ArrayList<Course> prereqs = new ArrayList<>();
-                for (int i = 0; i < courses.size(); i++) {
-                    courses.get(i).setPreRequisites(prereqs);
-
+                for (Course c : courses) {
+                    Course temp = new Course(rs.getString("Facultyname2"), rs.getInt("coursenumber2"));
+                    System.out.println(temp.toString());
+                    if (c.equals(temp)) {
+                        course.addPrerequisites(c);
+                    }
                 }
             }
-        } catch (SQLException e) {
+        }
+        catch(SQLException e){
             e.printStackTrace();
         }
     }
-
 }

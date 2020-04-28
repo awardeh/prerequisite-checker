@@ -9,6 +9,11 @@ public class Main {
     public static void main(String[] args) {
         showTables();
         ArrayList<Course> courses = makeCourse();
-        System.out.println(courses);
+        assert courses != null;
+        makePrereqs(courses.get(0), courses);
+        for (Course c : courses) {
+            System.out.println(c.toString());
+            System.out.println(c.getPreRequisites());
+        }
     }
 }
