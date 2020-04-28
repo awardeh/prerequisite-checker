@@ -8,7 +8,7 @@ public class DatabaseHelper {
     public static final String DBURL = "jdbc:sqlite:mydb.sqlite";
 
     public static void drop() {
-        String sql = "drop table courses";
+        String sql = "drop table COURSES";
 
         try (Connection conn = DriverManager.getConnection(DBURL);
              Statement stmt = conn.createStatement()) {
@@ -17,7 +17,7 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
 
-        String sql2 = "drop table courses";
+        String sql2 = "drop table prereqs";
 
         try (Connection conn = DriverManager.getConnection(DBURL);
              Statement stmt = conn.createStatement()) {
@@ -29,8 +29,6 @@ public class DatabaseHelper {
     }
 
     public static void createNewTable() {
-        // SQLite connection string
-
         String sql = "CREATE TABLE IF NOT EXISTS COURSES(FacultyName text, CourseNumber int, coursename text, "
                 + "courseDescription text, credits int, PRIMARY KEY (facultyname, coursenumber))";
 
@@ -150,7 +148,7 @@ public class DatabaseHelper {
     }
 
     public static void makePrereqs(Course course, ArrayList<Course> courses) {
-        String sql = "SELECT Facultyname2, coursenumber2 FROM prereqs where Facultyname1 = ? and coursenumber1 = ?";
+        String sql = "SELECT facultyname2, coursenumber2 FROM prereqs where Facultyname1 = ? and coursenumber1 = ?";
         try (Connection conn = DriverManager.getConnection(DBURL)) {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, course.getCourseFaculty());
@@ -159,15 +157,34 @@ public class DatabaseHelper {
             while (rs.next()) {
                 for (Course c : courses) {
                     Course temp = new Course(rs.getString("Facultyname2"), rs.getInt("coursenumber2"));
-                    System.out.println(temp.toString());
                     if (c.equals(temp)) {
                         course.addPrerequisites(c);
                     }
                 }
             }
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public static void makePostreqs(Course course, ArrayList<Course> courses) {
+        String sql = "SELECT * FROM prereqs where Facultyname2 = ? and coursenumber2 = ?";
+        try (Connection conn = DriverManager.getConnection(DBURL)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, course.getCourseFaculty());
+            pstmt.setInt(2, course.getCourseNumber());
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                for (Course c : courses) {
+                    Course temp = new Course(rs.getString("Facultyname1"), rs.getInt("coursenumber1"));
+                    if (c.equals(temp)) {
+                        course.addPostrequisites(c);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
